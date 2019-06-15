@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, AlertController } from 'ionic-angular';
 import { SalaService } from '../../app/sala-service'
 
 @Component({
@@ -8,16 +8,32 @@ import { SalaService } from '../../app/sala-service'
 })
 export class HomePage {
 
-  salas;
-
-  constructor(public navCtrl: NavController, private salaService: SalaService) {
-    this.salas = this.salaService.salas;
+  constructor(public navCtrl: NavController, 
+              private salaService: SalaService,
+              public alertCtrl: AlertController) {
   }
 
-  onEntrarClick(nome, sala){
-    this.navCtrl.push('ChatPage', {
-      nomeParam: nome,
-      salaParam: sala
-    })
+  onEntrarClick(nome, sala, icone){
+    console.log("icone:", icone);
+    if(!this.salaService.nomeNaSala(nome, sala)){
+      sala = this.salaService.salas[sala.id];
+      const usuario = {
+        nome: nome,
+        icone: icone
+      }
+      sala.usuarios.push(usuario);
+      this.navCtrl.push('ChatPage', {
+        usuarioParam: usuario,
+        salaParam: sala
+      });
+    }
+
+    else{
+      this.alertCtrl.create({
+        title: "Usuario já existe!!",
+        subTitle: "Escolha um nome diferente.",
+        buttons: ["OK"]
+      }).present();
+    }
   }
 }
