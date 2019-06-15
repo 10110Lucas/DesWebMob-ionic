@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { AngularFireDatabase } from 'angularfire2/database';
+import { SalaService } from '../../app/sala-service';
 
 /**
  * Generated class for the ChatPage page.
@@ -16,14 +18,23 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 export class ChatPage {
   sala; 
   usuario;
+  mensagens;
 
   constructor(public navCtrl: NavController, 
-              public navParams: NavParams) {
+              public navParams: NavParams,
+              db: AngularFireDatabase,
+              private salaService: SalaService) {
     this.sala = this.navParams.get("salaParam");
     this.usuario = this.navParams.get("usuarioParam");
+    this.mensagens = this.salaService.getMensagens(this.sala.$key);
   }
 
-  ionViewDidLoad() {
+  ionViewWillLeave(){
+    this.salaService.removeUsuario(this.navParams.get("usuarioKey"), 
+	this.sala);
+  }
+
+  /*ionViewDidLoad() {
     console.log('ionViewDidLoad ChatPage');
     console.log(this.sala);
   }
@@ -38,6 +49,6 @@ export class ChatPage {
       usuario: usuario,
       texto: texto
     })
-  }
+  }*/
 
 }
